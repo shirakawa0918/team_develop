@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おすすめの飲食店</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 基本設定とフォント */
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F4F4F4;
+            color: #333;
+        }
+
+        /* ヘッダー */
+        .header {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #1A73E8;
+            font-weight: bold;
+        }
+
+        /* メインコンテナ - Gridレイアウトで全体を構成 (重要!) */
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            /* 左側(2) 対 右側(1) の比率 */
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* カード共通スタイル */
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+        }
+
+        /* --- 画像比率の制御 --- */
+        /* 画像コンテナの共通スタイル - 16:9 の横長比率コンテナ */
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* 16:9 の比率 (高さ/幅 = 9/16) */
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        /* コンテナ内の画像 */
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 画像をトリミングしてコンテナに合わせる */
+            display: block;
+            border-radius: 4px;
+        }
+
+        /* --- 各セクションの Grid 配置 (左側) --- */
+        /* 1. 一番人気のメニュー画像 */
+        .main-image-card {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 1 / 2;
+            padding-bottom: 0;
+        }
+
+        .main-image-card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* 2. サブ画像2つ */
+        .sub-images-row {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 2 / 3;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            background: none;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+
+        .sub-image-card {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding-bottom: 0;
+        }
+
+        .sub-image-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* 3. レビューセクション (左列、縦長に伸びる) */
+        .review-section {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 3 / span 5;
+            /* 3行目から下を占有 */
+        }
+
+        .review-section .stars {
+            color: gold;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .review-item {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .review-item:first-child {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        /* --- 右側のエリア (サイドバー) の Grid 配置 --- */
+        .info-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 1 / 2;
+        }
+
+        .description-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 2 / 3;
+        }
+
+        /* マップ (右列、レビュー欄と同じ高さに伸びる) */
+        .map-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 3 / span 5;
+            /* レビュー欄と同じ高さを占有 */
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .map-card h2 {
+            padding: 20px 20px 0 20px;
+            margin-top: 0;
+        }
+
+        /* マップのiframeを親要素の高さ全体に広げる */
+        .map-card iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* レスポンシブ対応 (画面幅が狭い場合) */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                /* 1列にする */
+            }
+
+            /* すべての要素を1列目に縦に並べる */
+            .main-image-card,
+            .sub-images-row,
+            .review-section,
+            .info-card,
+            .description-card,
+            .map-card {
+                grid-column: 1 / 2;
+                grid-row: auto;
+            }
+
+            .sub-images-row {
+                flex-direction: column;
+            }
+
+            .map-card iframe {
+                height: 300px;
+                /* 縦並びの時は固定の高さに戻す */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>おすすめの飲食店：盛楼閣</h1>
+        <a href="#" class="home-link">ホームに遷移</a>
+    </header>
+    <main class="container">
+        <div class="main-image-card card">
+            <h2>一番人気のメニュー画像</h2>
+            <div class="image-container">
+                <img src="img/reimenn1.jpg" alt="一番人気のメニューの例">
+            </div>
+        </div>
+        <div class="sub-images-row">
+            <div class="sub-image-card">
+                <h3>店内写真</h3>
+                <div class="image-container">
+                    <img src="img/mitame.jpg" alt="店内の画像">
+                </div>
+            </div>
+            <div class="sub-image-card">
+                <h3>外観写真</h3>
+                <div class="image-container">
+                    <img src="img/gaikann.jpg" alt="外観の画像">
+                </div>
+            </div>
+        </div>
+        <div class="review-section card">
+            <h2>レビュー</h2>
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>私の同僚が焼肉店の盛岡冷麺の方がおいしかった気がするという話をしていたのと、ここが食べログで評価よかったのでここを訪れた。21時くらいに訪れたが六か七組ほど並んでいた。店の中に入り、一人焼肉。カルビとロースを食べるが、タレがすでについており、焼いたあとそのまま食べるとめちゃめちゃおいしい。
+                    その後に締めとして盛岡冷麺を食べるが、麺もツルツルとしており、汁もおいしかった。盛岡冷麺といえばスイカがあるイメージだが、時期が冬なので梨が添えられていた。また冷麺というとキンキンに冷えててこの冬に食べたくないという方もいるかもしれないが、それをお店の方が考慮しているためか、キンキンに冷えてはおらず、ちょうど良い冷たさだった。
+                </p>
+            </div>
+            <div class="review-item">
+                <div class="stars">★★★★☆</div>
+                <p>初めての盛岡冷麺
+                    ホテルのすぐ近くの名店に夜遅かったので並ばずに入店冷麺と白金豚とビビンバを注文しました今まで食べたことのない冷麺に感動しました麺のモッチモチ感牛骨スープのクリアなおいしさキムチとキムチのスープを入れていただくと又全然違う味になり驚きと感動の体験でした白金豚も甘くて美味しい又必ず行きたいです
+                    次の日ホテルをチェックアウトしてお店の前を通ると階段下までの大行列でびっくり。でもそれも頷けるお店 ごちそうさまでした</p>
+            </div>
+        
+            <div class="review-item">
+                <div class="stars">★★★☆☆</div>
+                <p>今日はめっちゃ寒かったんで温麺を食べたいなと思って訪問。複数で行くと肉肉頼むのでおひとり様でがいいかなと思い。
+                    お腹減ってたんでいっちやん安い定食を注文。
+                    米はめっちゃ美味かった❤️
+                    肉については味付けが濃すぎて肉を楽しむ事はできず。
+                    米以外にキムチ、スープもうまかった。
+                    でも…肝心の肉については❓
+                    とりあえず100名店行ったから満足くらいかな?
+                    温麺食べてどう思うか?
+                    再訪で温麺で勝負かな?
+                    安いの頼んだんでコスパは良かった❗️軽く晩御飯なら最高かも。</p>
+            </div>
+        
+        </div>
+        <div class="info-card card">
+            <h2>お店の住所など</h2>
+            <p><strong>店名：</strong>盛楼閣</p>
+            <p><strong>住所：</strong>岩手県盛岡市盛岡駅前通15-5 (ワールドインGENプラザ 2F)</p>
+            <p><strong>電話：</strong>019-654-8752</p>
+            <p><strong>営業時間：</strong>11:00 〜 翌2:00</p>
+        </div>
+        <div class="description-card card">
+            <h2>説明</h2>
+            <p>岩手県・盛岡駅前にある 焼肉＆冷麺の人気店 だよ。
+                とくに 盛岡冷麺の名店 としてめちゃくちゃ有名！
+
+                🍜 盛楼閣の冷麺の特徴
+
+                コシが強い 本格盛岡冷麺
+
+                牛骨ベースのすっきりスープ
+
+                辛さが選べるキムチ
+
+                味がしっかりで観光客にも地元の人にも人気
+
+                盛岡駅のすぐそばで行きやすいから、盛岡行ったらまずココ！って言われるお店だよ✨</p>
+        </div>
+        <div class="map-card">
+            <h2>マップ</h2>
+            <iframe src="https://www.google.com/maps?q=39.702805,141.136520&z=17&output=embed" width="100%"
+                height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </main>
+</body>
+
+</html>
