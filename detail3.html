@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おすすめの飲食店</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 基本設定とフォント */
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* ヘッダー */
+        .header {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        /* メインコンテナ - Gridレイアウトで全体を構成 (重要!) */
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            /* 左側(2) 対 右側(1) の比率 */
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* カード共通スタイル */
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+        }
+
+        /* --- 画像比率の制御 --- */
+
+        /* 画像コンテナの共通スタイル - 16:9 の横長比率コンテナ */
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* 16:9 の比率 (高さ/幅 = 9/16) */
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        /* コンテナ内の画像 */
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 画像をトリミングしてコンテナに合わせる */
+            display: block;
+            border-radius: 4px;
+        }
+
+        /* --- 各セクションの Grid 配置 (左側) --- */
+
+        /* 1. 一番人気のメニュー画像 */
+        .main-image-card {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 1 / 2;
+            padding-bottom: 0;
+        }
+
+        .main-image-card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* 2. サブ画像2つ */
+        .sub-images-row {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 2 / 3;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            background: none;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+
+        .sub-image-card {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding-bottom: 0;
+        }
+
+        .sub-image-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* 3. レビューセクション (左列、縦長に伸びる) */
+        .review-section {
+            grid-column: 1 / 2;
+            /* 左列 */
+            grid-row: 3 / span 5;
+            /* 3行目から下を占有 */
+        }
+
+        .review-section .stars {
+            color: gold;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .review-item {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .review-item:first-child {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        /* --- 右側のエリア (サイドバー) の Grid 配置 --- */
+
+        .info-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 1 / 2;
+        }
+
+        .description-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 2 / 3;
+        }
+
+        /* マップ (右列、レビュー欄と同じ高さに伸びる) */
+        .map-card {
+            grid-column: 2 / 3;
+            /* 右列 */
+            grid-row: 3 / span 5;
+            /* レビュー欄と同じ高さを占有 */
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .map-card h2 {
+            padding: 20px 20px 0 20px;
+            margin-top: 0;
+        }
+
+        /* マップのiframeを親要素の高さ全体に広げる */
+        .map-card iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* レスポンシブ対応 (画面幅が狭い場合) */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                /* 1列にする */
+            }
+
+            /* すべての要素を1列目に縦に並べる */
+            .main-image-card,
+            .sub-images-row,
+            .review-section,
+            .info-card,
+            .description-card,
+            .map-card {
+                grid-column: 1 / 2;
+                grid-row: auto;
+            }
+
+            .sub-images-row {
+                flex-direction: column;
+            }
+
+            .map-card iframe {
+                height: 300px;
+                /* 縦並びの時は固定の高さに戻す */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>おすすめの飲食店：松屋</h1>
+        <a href="index.html" class="home-link">ホームに遷移</a>
+    </header>
+
+    <main class="container">
+        <div class="main-image-card card">
+            <h2>一番人気のメニュー画像</h2>
+            <div class="image-container">
+                <img src="https://research.image.itmedia.co.jp/wp-content/uploads/2023/03/1678680211_pixta_81031456_M-min.jpg"
+                    alt="一番人気のメニューの例">
+            </div>
+        </div>
+
+        <div class="sub-images-row">
+            <div class="sub-image-card">
+                <h3>店内写真</h3>
+                <div class="image-container">
+                    <img src="https://lh3.googleusercontent.com/gps-cs-s/AG0ilSwKs7yvpI6gMXJ3Y7ptOU-X0hR-hRfarfFQEqQkt-kkcnriwjdVfi93AVvNtu6SsuLAfb4bCG6zelmO67rK-t4Lx97iK4mxtEcK7CdilqzcKP86_hoONnQgJuiN23bsOcG7evML=s1360-w1360-h1020-rw"
+                        alt="店内の画像">
+                </div>
+            </div>
+            <div class="sub-image-card">
+                <h3>外観写真</h3>
+                <div class="image-container">
+                    <img src="https://tblg.k-img.com/restaurant/images/Rvw/264737/388074c0849034e75bc4a268f73a210b.jpg" alt="外観の画像">
+                </div>
+            </div>
+        </div>
+
+        <div class="review-section card">
+            <h2>レビュー</h2>
+
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>チェーン店なので食事やサービスは、期待通りです。７時以降に開店する喫茶店などはありますが、高速バスで盛岡駅に早朝６時に到着した際にとても助かる朝定食でした。</p>
+            </div>
+
+            <div class="review-item">
+                <div class="stars">★★★★☆</div>
+                <p>キターーーーーーーーーーーーーーーーーッ!!!
+                    松屋人気の代表格である【豚めし】が最近復活。（2022年2月）
+                    これはマジ悶絶美味いのでおすすめだよ〜ん。
+                    松弁（テイクアウト）も便利だよ。</p>
+            </div>
+
+            <div class="review-item">
+                <div class="stars">★☆☆☆☆</div>
+                <p>全体的に塩気が強い。米があまり美味しくない。山芋とろろがイマイチ。大根おろしはもう少し細かく擦ったのが好み。モーニングタイムにこの値段は無い。あくまで個人的な感想。</p>
+            </div>
+
+            <div class="review-item">
+                <div class="stars">★★★☆☆</div>
+                <p>盛岡駅前、早朝や深夜のニーズを満たす恐らく駅前唯一の、ファーストフードのお店だと思います。味は安定の松屋。シングル向けの席が多いような気がします。但しトイレは無かったような気がしますので要注意です。専用駐車場はありません。</p>
+            </div>
+
+            <div class="review-item">
+                <div class="stars">★★☆☆☆</div>
+                <p>ずーっと吉野家利用してたので何十年ぶりに松屋で頂きました。たまたまなのか白米がぼさぼさしてて美味しくありませんでした。古古古米使ってるのか外国のまずい米使ってるのか分かりませんが……
+吉野家の白米のほうが美味しいです。</p>
+            </div>
+        </div>
+
+        <div class="info-card card">
+            <h2>お店の住所など</h2>
+            <p><strong>店名：</strong>松屋</p>
+            <p><strong>住所：</strong>〒020-0034 岩手県盛岡市盛岡駅前通９−９</p>
+            <p><strong>電話：</strong>080-5928-0965</p>
+            <p><strong>営業時間：</strong>24時間営業</p>
+        </div>
+
+        <div class="description-card card">
+            <h2>説明</h2>
+            <p>松屋は、牛めしやカレー、定食などを提供する牛丼チェーン店を全国展開する企業です。1966年に練馬区で中華料理店として創業し、1968年に牛めし・焼肉定食の1号店を開店しました</p>
+        </div>
+
+        <div class="map-card">
+            <h2>マップ</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12278.679340006078!2d141.12082242965698!3d39.702126829372034!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5f857633b7d61d81%3A0xa019e106377f9a8e!2z5p2-5bGLIOebm-WyoemnheWJjemAmuW6lw!5e0!3m2!1sja!2sjp!4v1764556012550!5m2!1sja!2sjp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </main>
+</body>
+
+</html>
